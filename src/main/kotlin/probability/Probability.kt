@@ -7,7 +7,7 @@ class Probability(percentage: Number) {
     private val percentage = percentage.toDouble()
 
     fun isCertain(): Boolean {
-        return percentage >= 100.0
+        return percentage == 100.0
     }
 
     init {
