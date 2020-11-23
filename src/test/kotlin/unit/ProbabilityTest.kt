@@ -21,6 +21,14 @@ class ProbabilityTest {
         assertEquals(Probability(30), !Probability(70))
     }
 
+    @Test fun `The probability of 70,5 not happening should be 29,5`() {
+        assertEquals(Probability(29.5), !Probability(70.5))
+    }
+
+    @Test fun `The probability of 70,5 not happening should not be 30`() {
+        assertNotEquals(Probability(30), !Probability(70.5))
+    }
+
     @Test fun `Check that hashcode works` () {
         assertNotSame(Probability(50).hashCode(), Probability(50).hashCode())
     }

@@ -11,9 +11,9 @@ class Probability(percentage: Number) {
     }
 
     init {
-//        if (percentage < 0 || percentage > 100){
-//            throw RuntimeException("percentage must be between 100 and 0")
-//        }
+        if (this.percentage < 0 || this.percentage > 100){
+            throw RuntimeException("percentage must be between 100 and 0")
+        }
     }
 
     fun and(other: Probability): Probability {
@@ -29,8 +29,6 @@ class Probability(percentage: Number) {
         return other.percentage == percentage
     }
 
-    override fun hashCode(): Int {
-        return percentage.hashCode()
-    }
+    override fun hashCode(): Int =  percentage.hashCode()
 
 }
