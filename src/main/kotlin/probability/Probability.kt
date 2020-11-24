@@ -1,6 +1,5 @@
 package probability
 
-import java.lang.RuntimeException
 
 class Probability(percentage: Number) {
 
@@ -11,17 +10,23 @@ class Probability(percentage: Number) {
     }
 
     init {
-        if (this.percentage < 0 || this.percentage > 100){
-            throw RuntimeException("percentage must be between 100 and 0")
-        }
+        require(this.percentage >= 0 && this.percentage <= 100) {"Percentage must be between 0 and 100"}
     }
 
-    fun and(other: Probability): Probability {
+    infix fun and(other: Probability): Probability {
         return Probability(other.percentage * percentage / 100)
+    }
+
+    infix fun or(other: Probability): Probability {
+        return Probability(other.percentage + this.percentage) - other.and(this)
     }
 
     operator fun not(): Probability{
         return Probability(100 - percentage)
+    }
+
+    operator fun minus(other: Probability): Probability {
+        return Probability(this.percentage - other.percentage)
     }
 
     override fun equals(other: Any?): Boolean {
