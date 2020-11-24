@@ -1,4 +1,4 @@
-package probability
+package oows
 
 
 class Probability(percentage: Number) {
