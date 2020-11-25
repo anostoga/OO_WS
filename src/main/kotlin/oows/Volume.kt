@@ -1,33 +1,29 @@
 package oows
 
-class Volume(amount: Int, unit: Unit) {
+class Volume(amount: Number, private val unit: Unit) {
 
-    val volume: Int = amount * unit.conversion
+    private val amount: Double = amount.toDouble()
 
     override fun equals(other: Any?): Boolean {
-        other as Volume
-        if (this.volume != other.volume) return false
-        return true
+        if (this === other) return true
+        if (other !is Volume) return false
+        return this.amount == convertedAmount(other)
     }
 
-    override fun hashCode() = 31 * volume
+    private fun convertedAmount(other: Volume) = other.amount * this.unit.ratio(other.unit)
 
 }
 
-class Unit(type: Type) {
+class Unit private constructor(baseUnitRatio: Number) {
+    internal fun ratio(other: Unit) = other.baseUnitRatio / this.baseUnitRatio
 
-    val conversion: Int = when (type) {
-        Type.Teaspoon -> 1
-        Type.Tablespoon -> 3
-        Type.Ounce -> 6
-        Type.Cup -> 32
-        Type.Pint -> 64
-        Type.Quart -> 128
-        Type.Gallon -> 512
-    }
+    private val baseUnitRatio = baseUnitRatio.toDouble()
 
-    enum class Type {
-        Tablespoon, Teaspoon, Ounce, Cup, Pint, Quart, Gallon
+    companion object{
+        val cup = Unit(48)
+        val ounce = Unit(6)
+        val teaspoon = Unit(1)
+        val tablespoon = Unit(3)
     }
 
 }
