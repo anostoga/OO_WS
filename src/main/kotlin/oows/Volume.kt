@@ -1,6 +1,14 @@
 package oows
 
-class Volume(amount: Number, private val unit: Unit) {
+class Volume private constructor(amount: Number, private val unit: Unit) {
+
+
+    companion object {
+        val Number.tablespoons get() = Volume(this, Unit.tablespoon)
+        val Number.teaspoons get() = Volume(this, Unit.teaspoon)
+        val Number.ounces get() = Volume(this, Unit.ounce)
+        val Number.cups get() = Volume(this, Unit.cup)
+    }
 
     private val amount: Double = amount.toDouble()
 
@@ -12,6 +20,13 @@ class Volume(amount: Number, private val unit: Unit) {
 
     private fun convertedAmount(other: Volume) = other.amount * this.unit.ratio(other.unit)
 
+    operator fun unaryMinus() = Volume(-amount, unit)
+
+    override fun hashCode(): Int {
+        var result = unit.hashCode()
+        result = 31 * result + amount.hashCode()
+        return result
+    }
 }
 
 
