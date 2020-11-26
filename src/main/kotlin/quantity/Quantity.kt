@@ -26,7 +26,7 @@ class Quantity internal constructor(amount: Number, private val unit: Unit) {
 
     operator fun unaryMinus() = Quantity(-amount, unit)
 
-    operator fun plus(other: Quantity) = Quantity(this.amount + convertedAmount(other), this.unit)
+    operator fun plus(other: Quantity) = Quantity(this.amount + convertedAmount(other), this.unit).also { require(unit.isPossibleToPlusMinus()) {"Cannot do arithmetic operations on temperature"} }
 
-    operator fun minus(other: Quantity) = this + -other
+    operator fun minus(other: Quantity) = (this + -other).also { require(unit.isPossibleToPlusMinus()) {"Cannot do arithmetic operations on temperature"} }
 }

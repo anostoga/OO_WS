@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import quantity.Unit.Companion.celsiuses
 import quantity.Unit.Companion.chains
 import quantity.Unit.Companion.cups
+import quantity.Unit.Companion.fahrenheits
 import quantity.Unit.Companion.feet
 import quantity.Unit.Companion.furlongs
 import quantity.Unit.Companion.gallons
@@ -32,6 +34,8 @@ internal class QuantityTest {
         assertNotEquals(8.tablespoons, 6.tablespoons)
         assertNotEquals(8.tablespoons, Any())
         assertNotEquals(8.tablespoons, null)
+
+        assertEquals(1.celsiuses, 1.celsiuses)
     }
 
     @Test internal fun `equality of different units`() {
@@ -39,6 +43,11 @@ internal class QuantityTest {
         assertEquals(768.teaspoons, 1.gallons)
         assertNotEquals(8.tablespoons, 8.cups)
         assertEquals(1.miles, (12 * 5280).inches)
+
+        assertEquals(32.fahrenheits, 0.celsiuses)
+        assertEquals(0.celsiuses, 32.fahrenheits)
+        assertEquals(100.celsiuses, 212.fahrenheits)
+        assertNotEquals(0.celsiuses, 0.fahrenheits)
     }
 
     @Test fun `Quantity in hash set`() {
@@ -51,6 +60,7 @@ internal class QuantityTest {
         assertEquals(8.tablespoons.hashCode(), 8.tablespoons.hashCode())
         assertEquals(8.tablespoons.hashCode(), 0.5.cups.hashCode())
         assertEquals(18.inches.hashCode(), 0.5.yards.hashCode())
+        assertEquals(10.celsiuses.hashCode(), 50.fahrenheits.hashCode())
     }
 
     @Test fun arithmetic() {
@@ -59,6 +69,13 @@ internal class QuantityTest {
         assertEquals((-0.5).pints, 10.tablespoons - 13.ounces)
         assertEquals(-4.feet, 24.inches - 2.yards)
         assertEquals(8.chains, 1.furlongs - 44.yards)
+
+        assertEquals(2.tablespoons + 1.teaspoons, 4.teaspoons + 1.tablespoons)
+
+        assertThrows<Exception> { 100.celsiuses + 212.fahrenheits }
+        assertThrows<Exception> { 100.celsiuses + 100.fahrenheits }
+        assertThrows<Exception> { 100.celsiuses - 212.fahrenheits }
+
     }
 
     @Test fun `cross metric types`() {
@@ -69,4 +86,6 @@ internal class QuantityTest {
     @Test fun `incompatible units`() {
         assertThrows<IllegalArgumentException> { 3.yards - 4.tablespoons}
     }
+
+
 }
