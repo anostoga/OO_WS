@@ -72,10 +72,10 @@ internal class QuantityTest {
 
         assertEquals(2.tablespoons + 1.teaspoons, 4.teaspoons + 1.tablespoons)
 
-        assertThrows<Exception> { 100.celsiuses + 212.fahrenheits }
-        assertThrows<Exception> { 100.celsiuses + 100.fahrenheits }
-        assertThrows<Exception> { 100.celsiuses - 212.fahrenheits }
-
+        // The following should not compile
+        // 100.celsiuses + 212.fahrenheits
+        // 100.celsiuses + 100.fahrenheits
+        // 100.celsiuses - 212.fahrenheits
     }
 
     @Test fun `cross metric types`() {
