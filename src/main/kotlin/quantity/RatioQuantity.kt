@@ -14,5 +14,5 @@ class RatioQuantity internal constructor(amount: Number, unit: Unit) : IntervalQ
 
     operator fun plus(other: RatioQuantity) = RatioQuantity(this.amount + convertedAmount(other), this.unit)
 
-    operator fun minus(other: RatioQuantity) = (this + -other)
+    operator fun minus(other: RatioQuantity) = this + -other
 }

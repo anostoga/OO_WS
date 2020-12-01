@@ -1,6 +1,10 @@
-package quantity
+/*
+ * Copyright (c) 2020 by Fred George
+ * May be used freely except for training; license required for training.
+ * @author Fred George  fredgeorge@acm.org
+ */
 
-import kotlin.math.roundToLong
+package quantity
 
 class Unit {
     private val baseUnit: Unit
@@ -41,10 +45,16 @@ class Unit {
         val Number.miles get() = RatioQuantity(this, mile)
 
         private val celsius = Unit()
-        private val fahrenheit = Unit(5.0 / 9.0, 32.0, celsius)
+        private val fahrenheit = Unit(5/9.0, 32, celsius)
+        private val gasMark = Unit(125/9.0, -218.0/25, celsius)
+        private val kelvin = Unit(1, 273.15, celsius)
+        private val rankine = Unit(5/9.0, 491.67, celsius)
 
-        val Number.celsiuses get() = IntervalQuantity(this, celsius)
-        val Number.fahrenheits get() = IntervalQuantity(this, fahrenheit)
+        val Number.celsius get() = IntervalQuantity(this, Unit.celsius)
+        val Number.fahrenheit get() = IntervalQuantity(this, Unit.fahrenheit)
+        val Number.gasMark get() = IntervalQuantity(this, Unit.gasMark)
+        val Number.kelvin get() = IntervalQuantity(this, Unit.kelvin)
+        val Number.rankine get() = IntervalQuantity(this, Unit.rankine)
     }
 
     private constructor() {
@@ -53,27 +63,20 @@ class Unit {
         offset = 0.0
     }
 
-    private constructor(relativeRatio: Number, relativeUnit: Unit) {
+    private constructor(relativeRatio: Number, offset: Number, relativeUnit: Unit) {
         baseUnit = relativeUnit.baseUnit
         baseUnitRatio = relativeRatio.toDouble() * relativeUnit.baseUnitRatio
-        offset = 0.0
+        this.offset = offset.toDouble()
     }
 
-    private constructor(relativeRatio: Number, offset: Double, relativeUnit: Unit) {
-        baseUnit = relativeUnit.baseUnit
-        baseUnitRatio = relativeRatio.toDouble() * relativeUnit.baseUnitRatio
-        this.offset = offset
-    }
+    private constructor(relativeRatio: Number, relativeUnit: Unit): this(relativeRatio, 0, relativeUnit)
 
     internal fun isCompatible(other: Unit) = this.baseUnit == other.baseUnit
 
     internal fun convertedAmount(otherAmount: Double, other: Unit) =
-        (((otherAmount - other.offset) * (other.baseUnitRatio / this.baseUnitRatio)) + this.offset).also {
-            require(this.isCompatible(other)) { "Incompatible units for arithmetic" }
-        }
+            ((otherAmount - other.offset) * other.baseUnitRatio / this.baseUnitRatio + this.offset).also {
+                require(this.isCompatible(other)) { "Incompatible units for arithmetic" }
+            }
 
-
-
-    internal fun hashCode(amount: Double) = (((amount - offset) * baseUnitRatio) / EPSILON).roundToLong().hashCode()
-
+    internal fun hashCode(amount: Double) = ((amount - offset) * baseUnitRatio / EPSILON).toLong().hashCode()
 }
