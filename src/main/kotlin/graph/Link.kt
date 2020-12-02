@@ -6,12 +6,11 @@
 
 package graph
 
-class Link(private val target: Node, private val cost: Double) {
-    internal fun hopCount(destination: Node, visitedNodes: List<Node>): Double {
-        return target.hopCount(destination, visitedNodes) + 1
+internal class Link(private val target: Node, private val cost: Double) {
+    companion object {
+        internal fun List<Link>.cost() = this.sumByDouble { it.cost }
     }
 
-    internal fun cost(destination: Node, visitedNodes: List<Node>): Double {
-        return target.cost(destination, visitedNodes) + cost
-    }
+    internal fun paths(destination: Node, visitedNodes: List<Node>) =
+        target.paths(destination, visitedNodes).onEach { it.prepend(this) }
 }

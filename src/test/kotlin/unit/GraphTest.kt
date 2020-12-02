@@ -1,15 +1,7 @@
-/*
- * Copyright (c) 2020 by Fred George
- * May be used freely except for training; license required for training.
- * @author Fred George
- */
-
-package unit
 
 import graph.Node
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -32,18 +24,20 @@ internal class GraphTest {
         }
     }
 
-    @Test internal fun `can reach`() {
-        assertTrue(b canReach b)
-        assertTrue(b canReach a)
-        assertTrue(b canReach f)
-        assertTrue(b canReach d)
-        assertTrue(c canReach f)
-        assertFalse(g canReach b)
-        assertFalse(a canReach b)
-        assertFalse(b canReach g)
+    @Test
+    internal fun `can reach`() {
+        Assertions.assertTrue(b canReach b)
+        Assertions.assertTrue(b canReach a)
+        Assertions.assertTrue(b canReach f)
+        Assertions.assertTrue(b canReach d)
+        Assertions.assertTrue(c canReach f)
+        Assertions.assertFalse(g canReach b)
+        Assertions.assertFalse(a canReach b)
+        Assertions.assertFalse(b canReach g)
     }
 
-    @Test internal fun `hop count`() {
+    @Test
+    internal fun `hop count`() {
         assertEquals(0, b hopCount b)
         assertEquals(1, b hopCount a)
         assertEquals(1, b hopCount f)
@@ -54,7 +48,8 @@ internal class GraphTest {
         assertThrows<IllegalArgumentException> { b hopCount g}
     }
 
-    @Test fun cost() {
+    @Test
+    fun cost() {
         assertEquals(0.0, b cost b)
         assertEquals(5.0, b cost a)
         assertEquals(4.0, b cost f)
@@ -63,5 +58,32 @@ internal class GraphTest {
         assertThrows<IllegalArgumentException> { g cost b }
         assertThrows<IllegalArgumentException> { a cost b }
         assertThrows<IllegalArgumentException> { b cost g }
+    }
+
+    @Test
+    fun path() {
+        assertPath(a, a, 0, 0)
+        assertPath(b, a, 1, 5)
+        assertPath(b, f, 1, 4)
+        assertPath(b, d, 2, 7)
+        assertPath(c, f, 4, 10)
+        assertPath(b, e, 3, 9)
+        assertThrows<IllegalArgumentException> { g path b }
+        assertThrows<IllegalArgumentException> { a path b }
+        assertThrows<IllegalArgumentException> { b path g }
+    }
+
+    private fun assertPath(source: Node, destination: Node, expectedHopCount: Int, expectedCost: Number) {
+        val p = source path destination
+        assertEquals(expectedHopCount, p.hopCount())
+        assertEquals(expectedCost.toDouble(), p.cost())
+    }
+
+    @Test
+    fun paths() {
+        assertEquals(1, (b paths a).size)
+        assertEquals(2, (c paths d).size)
+        assertEquals(3, (c paths f).size)
+        assertEquals(0, (b paths g).size)
     }
 }

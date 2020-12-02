@@ -6,34 +6,29 @@
 
 package graph
 
+import java.lang.IllegalArgumentException
+
 // Understands its neighbors
 class Node {
     private val links = mutableListOf<Link>()
 
-    companion object {
-        private const val UNREACHABLE = Double.POSITIVE_INFINITY
-    }
+    infix fun canReach(destination: Node) = paths(destination, noVisitedNodes).isNotEmpty()
 
-    infix fun canReach(destination: Node) = hopCount(destination, noVisitedNodes) != UNREACHABLE
+    infix fun hopCount(destination: Node) = path(destination, Path::hopCount).hopCount()
 
-    infix fun hopCount(destination: Node) = hopCount(destination, noVisitedNodes).also {
-        require(it != UNREACHABLE) { "Destination is unreachable" }
-    }.toInt()
+    infix fun cost(destination: Node) = path(destination).cost()
 
-    internal fun hopCount(destination: Node, visitedNodes: List<Node>): Double {
-        if (this == destination) return 0.0
-        if (this in visitedNodes) return UNREACHABLE
-        return links.minOfOrNull { neighbor -> neighbor.hopCount(destination, visitedNodes + this) } ?: UNREACHABLE
-    }
+    infix fun path(destination: Node) = path(destination, Path::cost)
 
-    infix fun cost(destination: Node) = cost(destination, noVisitedNodes).also {
-        require(it != UNREACHABLE) { "Destination is unreachable" }
-    }
+    infix fun paths(destination: Node) = paths(destination, noVisitedNodes)
 
-    internal fun cost(destination: Node, visitedNodes: List<Node>): Double {
-        if (this == destination) return 0.0
-        if (this in visitedNodes) return UNREACHABLE
-        return links.minOfOrNull { neighbor -> neighbor.cost(destination, visitedNodes + this) } ?: UNREACHABLE
+    private fun path(destination: Node, strategy: PathStrategy) = paths(destination).minByOrNull{ strategy(it).toDouble() } ?: throw IllegalArgumentException("")
+
+    internal fun paths(destination: Node, visitedNodes: List<Node>): List<Path> {
+        if (this == destination) return listOf(Path())
+        if (this in visitedNodes) return emptyList()
+        return links
+            .flatMap { neighbor -> neighbor.paths(destination, visitedNodes + this) }
     }
 
     private val noVisitedNodes = emptyList<Node>()
